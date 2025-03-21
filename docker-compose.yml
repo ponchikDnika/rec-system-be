@@ -1,0 +1,27 @@
+services:
+  neo4j:
+    image: neo4j:5.26.4-community
+    container_name: neo4j-movies
+    environment:
+      - NEO4JLABS_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_server_memory_heap_initial__size=8G
+      - NEO4J_server_memory_heap_max__size=8G
+      - NEO4J_server_memory_pagecache_size=4G
+      - NEO4J_dbms_memory_transaction_total_max=4G
+    ports:
+      - "7474:7474" # Web UI
+      - "7687:7687" # Bolt (driver) port
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '6.0'      # Limit to 2 CPU cores
+        reservations:
+          cpus: '3.0'
+
+volumes:
+  neo4j_data:
+  neo4j_logs:

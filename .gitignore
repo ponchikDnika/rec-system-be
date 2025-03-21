@@ -1,0 +1,16 @@
+target/
+logs
+*.idea
+*.localstack
+.bsp
+.DS_Store
+.env
+.env-dev
+.env-stg
+
+# VSCode & Metals
+.vscode
+.metals
+**/.bloop
+project/metals.sbt
+project/project
