@@ -4,15 +4,15 @@ import io.circe.Encoder
 import io.circe.generic.semiauto.deriveEncoder
 
 package object models {
-  final case class Movie(movieId: Long, title: String, genres: List[String], imdbId: Option[String], tmdbId: Option[String])
+  final case class Movie(movieId: Long, title: String, genres: List[String], imdbId: Option[String], tmdbId: Option[String], tags: List[String])
   object Movie {
     implicit val encoder: Encoder[Movie] = deriveEncoder
   }
 
-  final case class MovieWithTags(movie: Movie, tags: List[String])
-  object MovieWithTags {
-    implicit val encoder: Encoder[MovieWithTags] = deriveEncoder
-  }
+//  final case class MovieWithTags(movie: Movie, tags: List[String])
+//  object MovieWithTags {
+//    implicit val encoder: Encoder[MovieWithTags] = deriveEncoder
+//  }
 
 
 
