@@ -21,7 +21,7 @@ CALL apoc.periodic.iterate(
   "LOAD CSV WITH HEADERS FROM 'file:///movies.csv' AS row RETURN row",
   "MERGE (m:Movie {movieId: toInteger(row.movieId)})
    SET m.title = row.title, m.genres = split(row.genres, '|')",
-  {batchSize: 1000, parallel: true}
+  {batchSize: 1000, parallel: false}
 );
 ```
 
@@ -31,7 +31,7 @@ CALL apoc.periodic.iterate(
   "MERGE (u:User {userId: toInteger(row.userId)})
    MERGE (m:Movie {movieId: toInteger(row.movieId)})
    MERGE (u)-[:RATED {score: toFloat(row.rating)}]->(m)",
-  {batchSize: 1000, parallel: true}
+  {batchSize: 1000, parallel: false}
 );
 ```
 
@@ -42,7 +42,7 @@ CALL apoc.periodic.iterate(
    MERGE (m:Movie {movieId: toInteger(row.movieId)})
    MERGE (t:Tag {tag: row.tag})
    MERGE (m)-[:TAGGED]->(t)",
-  {batchSize: 1000, parallel: true}
+  {batchSize: 1000, parallel: false}
 );
 ```
 
@@ -52,7 +52,7 @@ CALL apoc.periodic.iterate(
   "MERGE (m:Movie {movieId: toInteger(row.movieId)})
    MERGE (l:Link {imdbId: row.imdbId, tmdbId: row.tmdbId})
    MERGE (m)-[:HAS_LINK]->(l)",
-  {batchSize: 1000, parallel: true}
+  {batchSize: 1000, parallel: false}
 );
 ```
    
