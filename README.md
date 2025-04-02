@@ -4,22 +4,28 @@
 4. Download and unzip dataset https://grouplens.org/datasets/movielens/latest/ (ml-latest-small)
 5. Copy dataset files into docker container:
 
-docker cp movies.csv neo4j-movies:/var/lib/neo4j/import/
-docker cp ratings.csv neo4j-movies:/var/lib/neo4j/import/
-docker cp tags.csv neo4j-movies:/var/lib/neo4j/import/
-docker cp links.csv neo4j-movies:/var/lib/neo4j/import/
+```docker cp movies.csv neo4j-movies:/var/lib/neo4j/import/```
 
-6. docker exec -it neo4j-movies /bin/bash
-7. Run ./bin/cypher-shell (for first time it will ask to change the password) (set the same as app is using)
+```docker cp ratings.csv neo4j-movies:/var/lib/neo4j/import/```
+
+```docker cp tags.csv neo4j-movies:/var/lib/neo4j/import/```
+
+```docker cp links.csv neo4j-movies:/var/lib/neo4j/import/```
+
+6. ```docker exec -it neo4j-movies /bin/bash```
+7. Run ```./bin/cypher-shell``` (for first time it will ask to change the password) (set the same as app is using)
 8. Import data
 
+```
 CALL apoc.periodic.iterate(
   "LOAD CSV WITH HEADERS FROM 'file:///movies.csv' AS row RETURN row",
   "MERGE (m:Movie {movieId: toInteger(row.movieId)})
    SET m.title = row.title, m.genres = split(row.genres, '|')",
   {batchSize: 1000, parallel: true}
 );
+```
 
+```
 CALL apoc.periodic.iterate(
   "LOAD CSV WITH HEADERS FROM 'file:///ratings.csv' AS row RETURN row",
   "MERGE (u:User {userId: toInteger(row.userId)})
@@ -27,7 +33,9 @@ CALL apoc.periodic.iterate(
    MERGE (u)-[:RATED {score: toFloat(row.rating)}]->(m)",
   {batchSize: 1000, parallel: true}
 );
+```
 
+```
 CALL apoc.periodic.iterate(
   "LOAD CSV WITH HEADERS FROM 'file:///tags.csv' AS row RETURN row",
   "MERGE (u:User {userId: toInteger(row.userId)})
@@ -36,7 +44,9 @@ CALL apoc.periodic.iterate(
    MERGE (m)-[:TAGGED]->(t)",
   {batchSize: 1000, parallel: true}
 );
+```
 
+```
 CALL apoc.periodic.iterate(
   "LOAD CSV WITH HEADERS FROM 'file:///links.csv' AS row RETURN row",
   "MERGE (m:Movie {movieId: toInteger(row.movieId)})
@@ -44,9 +54,11 @@ CALL apoc.periodic.iterate(
    MERGE (m)-[:HAS_LINK]->(l)",
   {batchSize: 1000, parallel: true}
 );
+```
    
 9. Collaborative filtering to create SIMILAR relationships
 
+```
 CALL apoc.periodic.iterate(
   "
   MATCH (m1:Movie)<-[:RATED]-(u:User)-[:RATED]->(m2:Movie)
@@ -87,4 +99,8 @@ CALL apoc.periodic.iterate(
   ",
   {batchSize: 100, parallel: true}
 );
+```
 
+11. Install scala https://www.scala-lang.org/download/
+12. `sbt run` to run the app
+13. Front end is located here https://github.com/ponchikDnika/rec-system-fe
