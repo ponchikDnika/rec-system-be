@@ -17,6 +17,20 @@
 8. Import data
 
 ```
+// Users
+CREATE CONSTRAINT unique_user IF NOT EXISTS FOR (u:User) REQUIRE u.userId IS UNIQUE;
+
+// Movies
+CREATE CONSTRAINT unique_movie IF NOT EXISTS FOR (m:Movie) REQUIRE m.movieId IS UNIQUE;
+
+// Links
+CREATE CONSTRAINT unique_link IF NOT EXISTS FOR (l:Link) REQUIRE l.imdbId IS UNIQUE;
+
+// Tags
+CREATE CONSTRAINT unique_tag IF NOT EXISTS FOR (t:Tag) REQUIRE t.tag IS UNIQUE;
+```
+
+```
 CALL apoc.periodic.iterate(
   "LOAD CSV WITH HEADERS FROM 'file:///movies.csv' AS row RETURN row",
   "MERGE (m:Movie {movieId: toInteger(row.movieId)})
