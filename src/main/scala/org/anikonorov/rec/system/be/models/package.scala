@@ -4,18 +4,25 @@ import io.circe.Encoder
 import io.circe.generic.semiauto.deriveEncoder
 
 package object models {
-  final case class Movie(movieId: Long, title: String, genres: List[String], imdbId: Option[String], tmdbId: Option[String], tags: List[String])
+  final case class Movie(
+      movieId: Long,
+      title: String,
+      genres: List[String],
+      imdbId: Option[String],
+      tmdbId: Option[String],
+      tags: List[String]
+  )
   object Movie {
     implicit val encoder: Encoder[Movie] = deriveEncoder
   }
 
-//  final case class MovieWithTags(movie: Movie, tags: List[String])
-//  object MovieWithTags {
-//    implicit val encoder: Encoder[MovieWithTags] = deriveEncoder
-//  }
+  case class Pagination(page: Int, limit: Int)
 
-
-
-  final case class Rating(userId: Long, movieId: Long, rating: Double)
-  final case class Tag(userId: Long, movieId: Long, tag: String)
+  object Pagination {
+    def safeApply(page: Int, limit: Int): Pagination = {
+      Option
+        .when(page >= 0 && limit > 0 && page < 100 && limit < 100)(Pagination(page, limit))
+        .getOrElse(Pagination(1, 10))
+    }
+  }
 }

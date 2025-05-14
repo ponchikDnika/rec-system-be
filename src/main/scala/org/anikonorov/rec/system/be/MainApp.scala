@@ -9,7 +9,7 @@ import org.anikonorov.rec.system.be.api.RoutesImpl
 import org.anikonorov.rec.system.be.service.Neo4jServiceImpl
 import zio.http.Header.{AccessControlAllowOrigin, Origin}
 import zio.http.Middleware.{CorsConfig, cors}
-import zio.http.Server
+import zio.http.{Middleware, Server}
 
 object MainApp extends ZIOAppDefault {
 
@@ -28,7 +28,7 @@ object MainApp extends ZIOAppDefault {
   override def run = {
     (for {
       routes <- ZIO.serviceWith[RoutesImpl](_.routes)
-      _      <- zio.http.Server.serve(routes @@ cors(config)).provide(Server.default)
+      _      <- zio.http.Server.serve(routes @@ cors(config) @@ Middleware.requestLogging(logRequestBody = true, logResponseBody = true)).provide(Server.default)
     } yield ()).provide(driver, Neo4jServiceImpl.layer, RoutesImpl.layer)
   }
 }
